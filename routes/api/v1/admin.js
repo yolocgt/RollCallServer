@@ -44,10 +44,14 @@ router.get('/admins', (req, res) => {
 
 	// 查询条件
 	var word = req.query.word;
+	var fil = {};
 	var filter = {};
 	if (word) {
 		// filter = { 'name': { $regex: `/${word}/` } };
-		filter.name = { $regex: `.*?${word}.*?` }
+		fil.account = { $regex: `.*?${word}.*?` }
+		fil.name = { $regex: `.*?${word}.*?` }
+		filter.$or = [fil];
+		console.log(filter.$or);
 	}
 	console.log("查询条件：");
 	console.log(filter);
@@ -62,5 +66,16 @@ router.get('/all_admin', (req, res) => {
 		res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 	})
 })
-
+// 修改管理员
+router.put('/admin/:id',(req,res) => {
+	var id = req.params.id;
+	adminDal.updateByID(id,req.body,(isOK) => {
+		if (isOK) {
+			res.json({ status: 'y', msg:'更新成功~'})
+		} else {
+			res.json({ status: 'n', msg:'更新失败!'})
+		}
+	})
+	
+})
 module.exports = router;
