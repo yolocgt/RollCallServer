@@ -86,8 +86,8 @@ app.all('/api/*', (req, res, next) => {
 })
 
 
-app.use('/api/v1/',require('./routes/api/v1/admin'));
-
+app.use('/api/v1/', require('./routes/api/v1/admin'));
+app.use('/api/v1/', require('./routes/api/v1/faculty'));
 app.listen(1219, () => {
   console.log('服务器运行在1219端口。');
 })

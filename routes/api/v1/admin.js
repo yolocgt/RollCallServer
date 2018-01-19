@@ -1,7 +1,5 @@
 const exp = require('express');
 const router = exp.Router();
-// const bodyParser = require('body-parser');
-// const db = require('../../../db');
 const AdminDal = require('../../../db').AdminDal;
 const adminDal = new AdminDal();
 
@@ -48,13 +46,14 @@ router.get('/admins', (req, res) => {
 	var filter = {};
 	if (word) {
 		// filter = { 'name': { $regex: `/${word}/` } };
-		fil.account = { $regex: `.*?${word}.*?` }
-		fil.name = { $regex: `.*?${word}.*?` }
-		filter.$or = [fil];
-		console.log(filter.$or);
+		// fil.account = { $regex: `.*?${word}.*?` }
+		// fil.name = { $regex: `.*?${word}.*?` }
+		// filter.$or = [fil];
+		filter.$or = [{ account: { '$regex': `.*?${word}.*?` } }, { name: { '$regex': `.*?${word}.*?` }}] ;
+		// console.log(filter.$or);
 	}
-	console.log("查询条件：");
-	console.log(filter);
+	// console.log("查询条件：");
+	// console.log(filter);
 	adminDal.getDataByPage(page, filter, (data) => {
 		res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 	})

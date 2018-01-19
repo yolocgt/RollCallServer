@@ -39,8 +39,16 @@ var Teacher = mongoose.model('teacher', {
 
 // 院系表
 var Faculty = mongoose.model('faculty', {
-
-})
+	facultyName: String,//院系名称
+	director: String,//系主任
+	phone:String//电话
+},'faculty')
+// 院系模型
+class FacultyDal extends DBBase{
+	constructor() {
+		super(Faculty);
+	}
+}
 
 // 课程表
 var Course = mongoose.model('course', {
@@ -50,5 +58,7 @@ var Course = mongoose.model('course', {
 module.exports = {
 	Admin,
 	AdminDal,
+	Faculty,
+	FacultyDal
 	// Student, Teacher, Faculty, Course
 }
