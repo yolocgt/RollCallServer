@@ -1,8 +1,6 @@
-function luyou(adminDal, module) {
-	const exp = require('express');
-	const router = exp.Router();
+function luyou(router, adminDal, moduleName) {
 	// 添加管理员
-	router.post(`/${module}`, (req, res) => {
+	router.post(`/${moduleName}`, (req, res) => {
 		adminDal.save(req.body, (isOK) => {
 			if (isOK) {
 				res.json({ status: 'y', msg: '新增成功~' })
@@ -12,7 +10,7 @@ function luyou(adminDal, module) {
 		})
 	})
 	// 删除管理员
-	router.delete(`/${module}:id`, (req, res) => {
+	router.delete(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
 		adminDal.del(id, function (isOK) {
 			if (isOK) {
@@ -23,7 +21,7 @@ function luyou(adminDal, module) {
 		})
 	})
 	// 获取一个管理员
-	router.get(`/${module}:id`, (req, res) => {
+	router.get(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
 		adminDal.findByID(id, function (data) {
 			// console.log(data);
@@ -31,7 +29,7 @@ function luyou(adminDal, module) {
 		})
 	})
 	// 获取分页管理员数据
-	router.get(`/${module}s`, (req, res) => {
+	router.get(`/${moduleName}s`, (req, res) => {
 		//分页页码
 		var page = 1;
 		if (req.query.page) {
@@ -56,13 +54,13 @@ function luyou(adminDal, module) {
 	})
 
 	// 获取所有的管理员数据
-	router.get(`/all_${module}`, (req, res) => {
+	router.get(`/all_${moduleName}`, (req, res) => {
 		adminDal.getData({}, (data) => {
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 		})
 	})
 	// 修改管理员
-	router.put(`/${module}:id`, (req, res) => {
+	router.put(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
 		adminDal.updateByID(id, req.body, (isOK) => {
 			if (isOK) {
@@ -76,4 +74,4 @@ function luyou(adminDal, module) {
 	return router;
 }
 
-module.exports = {luyou};
+module.exports = luyou;
