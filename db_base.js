@@ -20,8 +20,9 @@ mongoose.connection.on('error', function (err) {
 class DBBase {
     constructor(model) {
         this.model = model
-        this.mName = this.model.modelName;
+        this.mName = model.modelName;
     }
+    
     /**
      * 分页取数据
      * @param  {[type]}   page     当前页码
