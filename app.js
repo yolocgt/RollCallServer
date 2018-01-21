@@ -86,8 +86,19 @@ app.all('/api/*', (req, res, next) => {
 })
 
 
-app.use('/api/v1/', require('./routes/api/v1/admin'));
-app.use('/api/v1/', require('./routes/api/v1/faculty'));
+// app.use('/api/v1', require('./routes/api/v1/admin'));
+// app.use('/api/v1', require('./routes/api/v1/faculty'));
+// app.use('/api/v1', require('./routes/api/v1/course'));
+
+app.use('/api/v1', require('./routes/api/v1/routes'));
+
+// console.log(app);
+// console.log(app._router);
+// console.log(app._router.stack);
+// setTimeout(() => {
+//   console.log(app._router);
+// }, 3000);
+
 app.listen(1219, () => {
   console.log('服务器运行在1219端口。');
 })
