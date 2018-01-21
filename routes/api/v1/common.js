@@ -1,3 +1,10 @@
+/**
+ * @description 
+ * @author CGT
+ * @param {Function} router 路由
+ * @param {Object} adminDal 数据访问层
+ * @param {String} moduleName 模块名
+ */
 function setRoute(router, adminDal, moduleName) {
 
 	// 添加管理员

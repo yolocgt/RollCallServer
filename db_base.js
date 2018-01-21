@@ -1,16 +1,27 @@
+// mongoose
 var mongoose = require('mongoose')
-mongoose.Promise = global.Promise
 
-mongoose.connect("mongodb://localhost/book_shop")
+// 建立数据库连接
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/RollCall', {
+    useMongoClient: true,
+    promiseLibrary: global.Promise
+});
+mongoose.connection.on('open', function () {
+    console.log('数据库连接成功~');
+});
+mongoose.connection.on('error', function (err) {
+    console.log('数据库连接失败！' + err);
+})
 
 /**
  * 数据库操作基础模型
  */
-class DBBase{
-    constructor(model){
+class DBBase {
+    constructor(model) {
         this.model = model
+        this.mName = this.model.modelName;
     }
-
     /**
      * 分页取数据
      * @param  {[type]}   page     当前页码
@@ -18,46 +29,30 @@ class DBBase{
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
      */
-    getDataByPage(page,filter,callback){
+    getDataByPage(page, filter, callback) {
         var pageSize = global.pageSize //每页显示的数量
         this.model.count(filter) //统计记录数量
-            .then(count=>{
+            .then(count => {
                 // console.log(count)
-                var pageCount = Math.ceil(count/pageSize)
-                if(page>pageCount){ //防止页码超出范围
-                    page=pageCount
+                var pageCount = Math.ceil(count / pageSize)
+                if (page > pageCount) { //防止页码超出范围
+                    page = pageCount
                 }
                 // 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
-                if(page<=0){
+                if (page <= 0) {
                     page = 1
                 }
                 this.model.find(filter) //根据条件进行查询
                     .limit(pageSize)
-                    .skip(pageSize*(page-1))
-                    .sort({_id:-1})
-                    .then(res=>{
+                    .skip(pageSize * (page - 1))
+                    .sort({ _id: -1 })
+                    .then(res => {
                         //返回两个数据 总页数和查询结果
-                        callback({pageCount:pageCount,res:res})
+                        callback({ pageCount: pageCount, res: res })
                     })
-                    .catch(err=>{
+                    .catch(err => {
                         console.log(err)
                     })
-            })
-    }
-
-    /**
-     * 根据查询条件取数据
-     * @param  {[type]}   filter   查询条件
-     * @param  {Function} callback 回调函数
-     * @return {[type]}            [description]
-     */
-    getData(filter,callback){
-        this.model.find(filter)
-            .then(res=>{
-                callback(res)
-            })
-            .catch(err=>{
-                console.log(err)
             })
     }
 
@@ -67,29 +62,27 @@ class DBBase{
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
      */
-    save(m,callback){
+    save(m, callback) {
         var data = new this.model(m)
         data.save()
-            .then(callback(true,data))
-            .catch(err=>{
+            .then(callback(true, data))
+            .catch(err => {
                 console.log(err)
             })
     }
 
     /**
-     * 根据id获取单条记录
-     * @param  {[type]}   id       获取数据的id
+     * 根据id删除指定的记录
+     * @param  {[type]}   id       需要删除的id
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
      */
-    findByID(id,callback){
-        this.model.findById(id)
-            .then(res=>{
-                callback(res)
-            })
-            .catch(err=>{
+    del(id, callback) {
+        this.model.findByIdAndRemove(id)
+            .then(callback(true))
+            .catch(err => {
                 console.log(err)
-                callback(null)
+                callback(false)
             })
     }
 
@@ -100,28 +93,51 @@ class DBBase{
      * @param  {Function} callback [description]
      * @return {[type]}            [description]
      */
-    updateByID(id,model,callback){
-        this.model.findByIdAndUpdate(id,model)
+    updateByID(id, model, callback) {
+        this.model.findByIdAndUpdate(id, model)
             .then(callback(true))
-            .catch(err=>{
+            .catch(err => {
                 console.log(err)
                 callback(false)
             })
     }
 
     /**
-     * 根据id删除指定的记录
-     * @param  {[type]}   id       需要删除的id
+     * 根据查询条件取数据
+     * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
      */
-    del(id,callback){
-        this.model.findByIdAndRemove(id)
-            .then(callback(true))
-            .catch(err=>{
+    getData(filter, callback) {
+        this.model.count(filter)
+            .then(count => {
+                this.model.find(filter)
+                    .then(res => {
+                        callback(res, count)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            })
+    }
+
+    /**
+     * 根据id获取单条记录
+     * @param  {[type]}   id       获取数据的id
+     * @param  {Function} callback 回调函数
+     * @return {[type]}            [description]
+     */
+    findByID(id, callback) {
+        this.model.findById(id)
+            .then(res => {
+                callback(res)
+            })
+            .catch(err => {
                 console.log(err)
-                callback(false)
+                callback(null)
             })
     }
 }
-module.exports = {DBBase:DBBase,mongoose:mongoose}
+
+// 导出数据库操作基础模型，mongoose
+module.exports = { DBBase: DBBase, mongoose: mongoose }
