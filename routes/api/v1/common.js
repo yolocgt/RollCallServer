@@ -1,4 +1,5 @@
-function luyou(router, adminDal, moduleName) {
+function setRoute(router, adminDal, moduleName) {
+
 	// 添加管理员
 	router.post(`/${moduleName}`, (req, res) => {
 		adminDal.save(req.body, (isOK) => {
@@ -36,8 +37,8 @@ function luyou(router, adminDal, moduleName) {
 			page = Number(req.query.page);
 		}
 
+		// ******************* 查询条件 *******************
 		var filter = {};
-		// 查询条件
 		var word = req.query.word;
 		if (word) {
 			filter.$or = [
@@ -46,8 +47,7 @@ function luyou(router, adminDal, moduleName) {
 			];
 			// console.log(filter.$or);
 		}
-		// console.log("查询条件：");
-		// console.log(filter);
+		// console.log("查询条件：");  console.log(filter);
 		adminDal.getDataByPage(page, filter, (data) => {
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 		})
@@ -71,7 +71,7 @@ function luyou(router, adminDal, moduleName) {
 		})
 
 	})
-	return router;
+	// return router;
 }
 
-module.exports = luyou;
+module.exports = { setRoute };
