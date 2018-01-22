@@ -39,7 +39,7 @@ class MajorDal extends DBBase {
 	}
 }
 
-// 班级表
+////// 班级表
 var ClassInfo = mongoose.model('classInfo', {
 	major: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -52,11 +52,10 @@ var ClassInfo = mongoose.model('classInfo', {
 class ClassInfoDal extends DBBase {
 	constructor() {
 		super(ClassInfo);
-		// console.log(">>>>>>>>>>>>>>MajorDal");
 	}
 
-	/**重写父类方法
-     * 根据查询条件取数据
+	/**重写父类方法 根据查询条件取数据
+     * 
      * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
@@ -74,8 +73,7 @@ class ClassInfoDal extends DBBase {
 					})
 			})
 	}
-	/**
-     * 分页取数据
+	/**分页取数据
      * @param  {[type]}   page     当前页码
      * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
@@ -111,7 +109,7 @@ class ClassInfoDal extends DBBase {
 	}
 }
 
-// 学生表
+////// 学生表
 var Student = mongoose.model('student', {
 	name: String,//姓名
 	sex: String,//性别
@@ -130,7 +128,7 @@ var Student = mongoose.model('student', {
 	// account: String,//账号
 	password: {
 		type: String,
-		default: "123"
+		default: "123"	//202cb962ac59075b964b07152d234b70，21218cca77804d2ba1922c33e0151105，e10adc3949ba59abbe56e057f20f883e
 	}
 	// avatar:String//头像
 
@@ -140,8 +138,7 @@ class StudentDal extends DBBase {
 	constructor() {
 		super(Student);
 	}
-	/**
-     * 分页取数据
+	/** 分页取数据
      * @param  {[type]}   page     当前页码
      * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
@@ -181,7 +178,7 @@ class StudentDal extends DBBase {
 	}
 }
 
-// 教师表
+////// 教师表
 var Teacher = mongoose.model('teacher', {
 	name: String,//姓名
 	sex: String,//性别
@@ -207,8 +204,7 @@ class TeacherDal extends DBBase {
 	constructor() {
 		super(Teacher);
 	}
-	/**
-     * 分页取数据
+	/** 分页取数据
      * @param  {[type]}   page     当前页码
      * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
@@ -218,7 +214,6 @@ class TeacherDal extends DBBase {
 		var pageSize = global.pageSize //每页显示的数量
 		this.model.count(filter) //统计记录数量
 			.then(count => {
-				// console.log(count)
 				var pageCount = Math.ceil(count / pageSize)
 				if (page > pageCount) { //防止页码超出范围
 					page = pageCount
@@ -227,7 +222,6 @@ class TeacherDal extends DBBase {
 				if (page <= 0) {
 					page = 1
 				}
-				// console.log('》》》》》》》》》》覆盖父类的方法》》》》》》》》》》》》》》》》》》》》》》》》》》');
 				this.model.find(filter) //根据条件进行查询
 					.populate('facultyName')
 					.limit(pageSize)
@@ -244,7 +238,7 @@ class TeacherDal extends DBBase {
 	}
 }
 
-// 辅导员表
+////// 辅导员表
 var Headteacher = mongoose.model('headteacher', {
 	name: String,//姓名
 	sex: String,//性别
@@ -269,8 +263,7 @@ class HeadteacherDal extends DBBase {
 	constructor() {
 		super(Headteacher);
 	}
-	/**
-     * 分页取数据
+	/** 分页取数据
      * @param  {[type]}   page     当前页码
      * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
@@ -280,7 +273,6 @@ class HeadteacherDal extends DBBase {
 		var pageSize = global.pageSize //每页显示的数量
 		this.model.count(filter) //统计记录数量
 			.then(count => {
-				// console.log(count)
 				var pageCount = Math.ceil(count / pageSize)
 				if (page > pageCount) { //防止页码超出范围
 					page = pageCount
@@ -289,7 +281,6 @@ class HeadteacherDal extends DBBase {
 				if (page <= 0) {
 					page = 1
 				}
-				// console.log('》》》》》》》》》》覆盖父类的方法》》》》》》》》》》》》》》》》》》》》》》》》》》');
 				this.model.find(filter) //根据条件进行查询
 					.populate('facultyName')
 					.populate({
@@ -311,7 +302,7 @@ class HeadteacherDal extends DBBase {
 }
 
 
-// 课程表
+////// 课程表
 var Course = mongoose.model('course', {
 	courseName: String//课程名称
 }, 'course')
@@ -322,6 +313,68 @@ class CourseDal extends DBBase {
 	}
 }
 
+////// 排课表
+var Arrange = mongoose.model('arrange', {
+	learnYear: String,//学年
+	learnTerm: String,//学期
+	teacher: {//教师
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "teacher"
+	},
+	course: {//课程
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "course"
+	},
+	classInfo: {//班级
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "classInfo"
+	},
+}, 'arrange')
+// 排课模型
+class ArrangeDal extends DBBase {
+	constructor() {
+		super(Arrange)
+	}
+	/** 分页取数据
+     * @param  {[type]}   page     当前页码
+     * @param  {[type]}   filter   查询条件
+     * @param  {Function} callback 回调函数
+     * @return {[type]}            [description]
+     */
+	getDataByPage(page, filter, callback) {
+		var pageSize = global.pageSize //每页显示的数量
+		this.model.count(filter) //统计记录数量
+			.then(count => {
+				var pageCount = Math.ceil(count / pageSize)
+				if (page > pageCount) { //防止页码超出范围
+					page = pageCount
+				}
+				// 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
+				if (page <= 0) {
+					page = 1
+				}
+				this.model.find(filter) //根据条件进行查询
+					.populate('teacher')
+					.populate('course')
+					.populate({
+						path: 'classInfo',
+						populate: { path: 'major' }
+					})
+					.limit(pageSize)
+					.skip(pageSize * (page - 1))
+					.sort({ _id: -1 })
+					.then(res => {
+						//返回两个数据 总页数和查询结果
+						callback({ pageCount: pageCount, res: res })
+					})
+					.catch(err => {
+						console.log(err)
+					})
+			})
+	}
+}
+
+// 导出数据表和模型
 module.exports = {
 	Admin,
 	AdminDal,
@@ -338,6 +391,7 @@ module.exports = {
 	Teacher,
 	TeacherDal,
 	Headteacher,
-	HeadteacherDal
-	// Student, Teacher, Faculty, Course
+	HeadteacherDal,
+	Arrange,
+	ArrangeDal
 }
