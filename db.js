@@ -4,7 +4,7 @@ const DBBase = db_base.DBBase;
 
 ////// 管理员表
 var Admin = mongoose.model('admin', {
-	account: String,//账号
+	id: String,//账号
 	name: String,//姓名
 	password: String//密码
 }, 'admin')
@@ -113,7 +113,7 @@ class ClassInfoDal extends DBBase {
 var Student = mongoose.model('student', {
 	name: String,//姓名
 	sex: String,//性别
-	sno: Number,//学号
+	id: Number,//学号
 	phone: String,//电话
 	address: String,//地址
 	facultyName: {//学院
@@ -182,7 +182,7 @@ class StudentDal extends DBBase {
 var Teacher = mongoose.model('teacher', {
 	name: String,//姓名
 	sex: String,//性别
-	tno: Number,//教师号
+	id: Number,//教师号
 	phone: String,//电话
 	// address: String,//地址
 	facultyName: {//学院
@@ -242,7 +242,7 @@ class TeacherDal extends DBBase {
 var Headteacher = mongoose.model('headteacher', {
 	name: String,//姓名
 	sex: String,//性别
-	hno: Number,//工号
+	id: Number,//工号
 	phone: String,//电话
 	// address: String,//地址
 	facultyName: {//学院
@@ -300,7 +300,6 @@ class HeadteacherDal extends DBBase {
 			})
 	}
 }
-
 
 ////// 课程表
 var Course = mongoose.model('course', {
