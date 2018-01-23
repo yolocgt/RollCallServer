@@ -10,21 +10,26 @@ function setRoute(router, dal, moduleName) {
 	router.post(`/${moduleName}/login`, (req, res) => {
 		var id = req.body.username;
 		var psw = req.body.password;
-		dal.getData({'id':id},(data) => {
-			console.log(data.res);
-		})
-		
-		
-		dal.save(req.body, (isOK) => {
-			if (isOK) {
-				res.json({ status: 'y', msg: '新增成功~' })
-			} else {
-				res.json({ status: 'n', msg: '新增失败！' })
+		var filter = { "id": id };
+		dal.getData(filter, (data) => {
+			console.log(data);
+			// 查找到数据
+			if (data[0]) {
+				// 密码匹配
+				if (psw == data[0].password) {
+					console.log('成功');
+					res.json({ status: 'y', msg: '登录成功' })
+				} else {
+					console.log('失败');
+					res.json({ status: 'password error', msg: '密码有误' })
+				}
+			} else {//查找不到数据
+				res.json({ status: 'user is not exists', msg: '用户不存在' })
 			}
 		})
 	})
-	
-	
+
+
 	// 添加一条数据
 	router.post(`/${moduleName}`, (req, res) => {
 		dal.save(req.body, (isOK) => {

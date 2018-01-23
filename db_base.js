@@ -110,11 +110,15 @@ class DBBase {
      * @return {[type]}            [description]
      */
     getData(filter, callback) {
+        console.log('筛选条件：');
+        console.log(filter);
         this.model.count(filter)
             .then(count => {
                 this.model.find(filter)
                     .then(res => {
-                        callback(res, count)
+                        console.log('结果：：');
+                        console.log(res);
+                        callback(res)
                     })
                     .catch(err => {
                         console.log(err)
