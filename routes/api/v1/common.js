@@ -6,7 +6,25 @@
  * @param {String} moduleName 模块名
  */
 function setRoute(router, dal, moduleName) {
-
+	// 根据用户名查找一条数据
+	router.post(`/${moduleName}/login`, (req, res) => {
+		var id = req.body.username;
+		var psw = req.body.password;
+		dal.getData({'id':id},(data) => {
+			console.log(data.res);
+		})
+		
+		
+		dal.save(req.body, (isOK) => {
+			if (isOK) {
+				res.json({ status: 'y', msg: '新增成功~' })
+			} else {
+				res.json({ status: 'n', msg: '新增失败！' })
+			}
+		})
+	})
+	
+	
 	// 添加一条数据
 	router.post(`/${moduleName}`, (req, res) => {
 		dal.save(req.body, (isOK) => {
