@@ -75,7 +75,7 @@ function setRoute(router, dal, moduleName) {
 		// 1.模糊查询管理员
 		if (word) {
 			filter.$or = [
-				{ account: { '$regex': `.*?${word}.*?` } },
+				{ id: { '$regex': `.*?${word}.*?` } },
 				{ name: { '$regex': `.*?${word}.*?` } }
 			];
 			// console.log(filter.$or);
