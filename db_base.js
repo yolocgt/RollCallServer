@@ -64,6 +64,7 @@ class DBBase {
      * @return {[type]}            [description]
      */
     save(m, callback) {
+        // console.log(m);
         var data = new this.model(m)
         data.save()
             .then(callback(true, data))
@@ -110,14 +111,14 @@ class DBBase {
      * @return {[type]}            [description]
      */
     getData(filter, callback) {
-        console.log('筛选条件：');
-        console.log(filter);
+        // console.log('筛选条件：');
+        // console.log(filter);
         this.model.count(filter)
             .then(count => {
                 this.model.find(filter)
                     .then(res => {
-                        console.log('结果：：');
-                        console.log(res);
+                        // console.log('结果：：');
+                        // console.log(res);
                         callback(res)
                     })
                     .catch(err => {

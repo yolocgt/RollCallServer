@@ -12,15 +12,16 @@ function setRoute(router, dal, moduleName) {
 		var psw = req.body.password;
 		var filter = { "id": id };
 		dal.getData(filter, (data) => {
-			console.log(data);
+			var user = data[0];
+			console.log(user);
 			// 查找到数据
-			if (data[0]) {
+			if (user) {
 				// 密码匹配
-				if (psw == data[0].password) {
-					console.log('成功');
-					res.json({ status: 'y', msg: '登录成功' })
+				if (psw == user.password) {
+					// console.log('成功');
+					res.json({ status: 'y', msg: '登录成功', name: user.name })
 				} else {
-					console.log('失败');
+					// console.log('失败');
 					res.json({ status: 'password error', msg: '密码有误' })
 				}
 			} else {//查找不到数据
@@ -32,6 +33,7 @@ function setRoute(router, dal, moduleName) {
 
 	// 添加一条数据
 	router.post(`/${moduleName}`, (req, res) => {
+		// console.log(req.body);
 		dal.save(req.body, (isOK) => {
 			if (isOK) {
 				res.json({ status: 'y', msg: '新增成功~' })
