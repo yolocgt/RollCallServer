@@ -81,9 +81,6 @@ OK：https://segmentfault.com/q/1010000012585905#a-1020000012729565
 	
 	
 	
-	
-	
-	
 四、审核请假信息
 	审核请假信息
 
@@ -93,3 +90,4 @@ OK：https://segmentfault.com/q/1010000012585905#a-1020000012729565
 
 
 
+mongoexport -d RollCall -c teacher -o teacher.dat

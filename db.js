@@ -392,6 +392,7 @@ class ArrangeDal extends DBBase {
 						populate: { path: 'major' }
 					})
 					.then(res => {
+						console.log(res);
 						callback(res, count)
 					})
 					.catch(err => {
@@ -450,7 +451,10 @@ class RollcallDal extends DBBase {
 					page = 1
 				}
 				this.model.find(filter) //根据条件进行查询
-					.populate('arrange')
+					.populate({
+						path: 'arrange',
+						populate: { path: 'course' }
+					})
 					.populate({
 						path: 'classInfo',
 						populate: { path: 'major' }

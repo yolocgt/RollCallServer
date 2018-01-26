@@ -39,7 +39,7 @@ function setRoute(router, dal, moduleName) {
 				res.json({ status: 'y', msg: '新增成功~' })
 			} else {
 				res.json({ status: 'n', msg: '新增失败！' })
-			}
+			}从
 		})
 	})
 	// 删除一条数据
