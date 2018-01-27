@@ -41,12 +41,13 @@ class MajorDal extends DBBase {
 
 ////// 班级表
 var ClassInfo = mongoose.model('classInfo', {
+	cyear: Number,//年级
 	major: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "major"
 	},//关联专业
-	cyear: Number,//年级
-	cno: Number//班级
+	cno: Number,//班级
+	className:String//班级名
 }, "classInfo")
 // 班级模型
 class ClassInfoDal extends DBBase {
