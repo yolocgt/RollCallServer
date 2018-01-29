@@ -117,11 +117,11 @@ var Student = mongoose.model('student', {
 	id: Number,//学号
 	phone: String,//电话
 	address: String,//地址
-	facultyName: {//学院
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "faculty"
-	},
-	className: {//班级
+	// facultyName: {//学院
+	// 	type: mongoose.Schema.Types.ObjectId,
+	// 	ref: "faculty"
+	// },
+	classInfo: {//班级
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "classInfo"
 	},
@@ -160,9 +160,9 @@ class StudentDal extends DBBase {
 				}
 				// console.log('》》》》》》》》》》覆盖父类的方法》》》》》》》》》》》》》》》》》》》》》》》》》》');
 				this.model.find(filter) //根据条件进行查询
-					.populate('facultyName')
+					// .populate('facultyName')
 					.populate({
-						path: 'className',
+						path: 'classInfo',
 						populate: { path: 'major' }
 					})
 					.limit(pageSize)
@@ -186,7 +186,7 @@ var Teacher = mongoose.model('teacher', {
 	id: Number,//教师号
 	phone: String,//电话
 	// address: String,//地址
-	facultyName: {//学院
+	faculty: {//学院
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "faculty"
 	},
@@ -224,7 +224,7 @@ class TeacherDal extends DBBase {
 					page = 1
 				}
 				this.model.find(filter) //根据条件进行查询
-					.populate('facultyName')
+					.populate('faculty')
 					.limit(pageSize)
 					.skip(pageSize * (page - 1))
 					.sort({ _id: -1 })
