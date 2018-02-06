@@ -6,29 +6,32 @@
  * @param {String} moduleName 模块名
  */
 function setRoute(router, dal, moduleName) {
-	// 根据用户名查找一条数据
-	router.post(`/${moduleName}/login`, (req, res) => {
-		var id = req.body.username;
-		var psw = req.body.password;
-		var filter = { "id": id };
-		dal.getData(filter, (data) => {
-			var user = data[0];
-			console.log(user);
-			// 查找到数据
-			if (user) {
-				// 密码匹配
-				if (psw == user.password) {
-					// console.log('成功');
-					res.json({ status: 'y', msg: '登录成功', name: user.name })
-				} else {
-					// console.log('失败');
-					res.json({ status: 'password error', msg: '密码有误' })
+	// 学生、教师、管理员、辅导员的登录接口
+	if (moduleName == "student" || moduleName == "teacher" || moduleName == "counselor" || moduleName == "admin") {
+		// 根据用户名查找一条数据
+		router.post(`/${moduleName}/login`, (req, res) => {
+			var id = req.body.username;
+			var psw = req.body.password;
+			var filter = { "id": id };
+			dal.getData(filter, (data) => {
+				var user = data[0];
+				console.log(user);
+				// 查找到数据
+				if (user) {
+					// 密码匹配
+					if (psw == user.password) {
+						// console.log('成功');
+						res.json({ status: 'y', msg: '登录成功', name: user.name })
+					} else {
+						// console.log('失败');
+						res.json({ status: 'password error', msg: '密码有误' })
+					}
+				} else {//查找不到数据
+					res.json({ status: 'user is not exists', msg: '用户不存在' })
 				}
-			} else {//查找不到数据
-				res.json({ status: 'user is not exists', msg: '用户不存在' })
-			}
+			})
 		})
-	})
+	}
 
 
 	// 添加一条数据
@@ -39,7 +42,7 @@ function setRoute(router, dal, moduleName) {
 				res.json({ status: 'y', msg: '新增成功~' })
 			} else {
 				res.json({ status: 'n', msg: '新增失败！' })
-			}从
+			} 从
 		})
 	})
 	// 删除一条数据
