@@ -10,7 +10,7 @@ const db = require('../../../db');
 const setRoute = require('./common').setRoute;
 for (const key in db) {
 	// 判断是否为Dal数据模型
-	if (key.indexOf('Dal') != -1) {
+	if (key.indexOf('Dal') > -1) {
 		// console.log(key);
 		var dal = new (db[key])();
 		setRoute(router, dal, dal.mName);
@@ -24,11 +24,11 @@ for (const key in db) {
 // for (const key in router.stack) {
 // 	const r = router.stack[key].route
 // 	console.log(r.path);
-// 	if (i < 6) {
+// 	if (i < 7) {
 // 		console.log(r.methods);
 // 	}
 // 	i++;
-// 	if (i % 6 == 0) {
+// 	if (i % 7 == 0) {
 // 		console.log('\n');
 // 	}
 // }
