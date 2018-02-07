@@ -6,7 +6,10 @@ const DBBase = db_base.DBBase;
 var Admin = mongoose.model('admin', {
 	id: String,//账号
 	name: String,//姓名
-	password: String//密码
+	password: {
+		type: String,
+		default: 'e10adc3949ba59abbe56e057f20f883e'//123456
+	}//密码
 }, 'admin')
 // 管理员模型
 class AdminDal extends DBBase {
