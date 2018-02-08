@@ -8,7 +8,7 @@
 function setRoute(router, dal, moduleName) {
 	// 学生、教师、管理员、辅导员的登录接口
 	if (moduleName == "student" || moduleName == "teacher" || moduleName == "counselor" || moduleName == "admin") {
-		// 根据用户名查找一条数据
+		// 根据用户名查找一条数据，并比较密码
 		router.post(`/${moduleName}/login`, (req, res) => {
 			var id = req.body.username;
 			var psw = req.body.password;
@@ -29,6 +29,17 @@ function setRoute(router, dal, moduleName) {
 				} else {//查找不到数据
 					res.json({ status: 'user is not exists', msg: '用户不存在' })
 				}
+			})
+		})
+
+		// 根据账号查找一条数据
+		router.get(`/${moduleName}/exists/:id`, (req, res) => {
+			var id = req.params.id;
+			var filter = { "id": id };
+			console.log('查找的账号为：' + id);
+			dal.getData(filter, (data) => {
+				console.log(data);
+				res.json({ status: "y", data: data })
 			})
 		})
 	}
@@ -56,6 +67,18 @@ function setRoute(router, dal, moduleName) {
 			}
 		})
 	})
+	// 修改一条数据
+	router.put(`/${moduleName}/:id`, (req, res) => {
+		var id = req.params.id;
+		dal.updateByID(id, req.body, (isOK) => {
+			if (isOK) {
+				res.json({ status: 'y', msg: '更新成功~' })
+			} else {
+				res.json({ status: 'n', msg: '更新失败!' })
+			}
+		})
+
+	})
 	// 获取一条数据
 	router.get(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
@@ -64,6 +87,14 @@ function setRoute(router, dal, moduleName) {
 			res.json({ status: 'y', msg: '查找成功~', data: data })
 		})
 	})
+
+	// 获取所有的数据
+	router.get(`/all_${moduleName}`, (req, res) => {
+		dal.getData({}, (data) => {
+			res.json({ status: 'y', msg: '获取数据成功', data: data })
+		})
+	})
+
 	// 获取分页数据
 	router.get(`/${moduleName}s`, (req, res) => {
 		//分页页码
@@ -89,24 +120,8 @@ function setRoute(router, dal, moduleName) {
 		})
 	})
 
-	// 获取所有的数据
-	router.get(`/all_${moduleName}`, (req, res) => {
-		dal.getData({}, (data) => {
-			res.json({ status: 'y', msg: '获取数据成功', data: data })
-		})
-	})
-	// 修改一条数据
-	router.put(`/${moduleName}/:id`, (req, res) => {
-		var id = req.params.id;
-		dal.updateByID(id, req.body, (isOK) => {
-			if (isOK) {
-				res.json({ status: 'y', msg: '更新成功~' })
-			} else {
-				res.json({ status: 'n', msg: '更新失败!' })
-			}
-		})
 
-	})
+
 	// return router;
 }
 
