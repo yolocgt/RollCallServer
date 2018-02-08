@@ -22,40 +22,6 @@ class DBBase {
         this.model = model
         this.mName = model.modelName;
     }
-    
-    /**
-     * 分页取数据
-     * @param  {[type]}   page     当前页码
-     * @param  {[type]}   filter   查询条件
-     * @param  {Function} callback 回调函数
-     * @return {[type]}            [description]
-     */
-    getDataByPage(page, filter, callback) {
-        var pageSize = global.pageSize //每页显示的数量
-        this.model.count(filter) //统计记录数量
-            .then(count => {
-                // console.log(count)
-                var pageCount = Math.ceil(count / pageSize)
-                if (page > pageCount) { //防止页码超出范围
-                    page = pageCount
-                }
-                // 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
-                if (page <= 0) {
-                    page = 1
-                }
-                this.model.find(filter) //根据条件进行查询
-                    .limit(pageSize)
-                    .skip(pageSize * (page - 1))
-                    .sort({ _id: -1 })
-                    .then(res => {
-                        //返回两个数据 总页数和查询结果
-                        callback({ pageCount: pageCount, res: res })
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-            })
-    }
 
     /**
      * 保存数据到数据库
@@ -105,6 +71,23 @@ class DBBase {
     }
 
     /**
+     * 根据id获取单条记录
+     * @param  {[type]}   id       获取数据的id
+     * @param  {Function} callback 回调函数
+     * @return {[type]}            [description]
+     */
+    findByID(id, callback) {
+        this.model.findById(id)
+            .then(res => {
+                callback(res)
+            })
+            .catch(err => {
+                console.log(err)
+                callback(null)
+            })
+    }
+
+    /**
      * 根据查询条件取数据
      * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
@@ -128,19 +111,36 @@ class DBBase {
     }
 
     /**
-     * 根据id获取单条记录
-     * @param  {[type]}   id       获取数据的id
+     * 分页取数据
+     * @param  {[type]}   page     当前页码
+     * @param  {[type]}   filter   查询条件
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
      */
-    findByID(id, callback) {
-        this.model.findById(id)
-            .then(res => {
-                callback(res)
-            })
-            .catch(err => {
-                console.log(err)
-                callback(null)
+    getDataByPage(page, filter, callback) {
+        var pageSize = global.pageSize //每页显示的数量
+        this.model.count(filter) //统计记录数量
+            .then(count => {
+                // console.log(count)
+                var pageCount = Math.ceil(count / pageSize)
+                if (page > pageCount) { //防止页码超出范围
+                    page = pageCount
+                }
+                // 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
+                if (page <= 0) {
+                    page = 1
+                }
+                this.model.find(filter) //根据条件进行查询
+                    .limit(pageSize)
+                    .skip(pageSize * (page - 1))
+                    .sort({ _id: -1 })
+                    .then(res => {
+                        //返回两个数据 总页数和查询结果
+                        callback({ pageCount: pageCount, res: res })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             })
     }
 }
