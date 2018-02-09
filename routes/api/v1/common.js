@@ -32,7 +32,7 @@ function setRoute(router, dal, moduleName) {
 			})
 		})
 
-		// 根据账号查找一条数据
+		// 根据账号查找一条数据，判断是否存在
 		router.get(`/${moduleName}/exists/:id`, (req, res) => {
 			var id = req.params.id;
 			var filter = { "id": id };
@@ -55,9 +55,9 @@ function setRoute(router, dal, moduleName) {
 				res.json({ status: 'y', data: data })
 			})
 
+
 		})
 	}
-
 
 	// 添加一条数据
 	router.post(`/${moduleName}`, (req, res) => {
@@ -91,7 +91,6 @@ function setRoute(router, dal, moduleName) {
 				res.json({ status: 'n', msg: '更新失败!' })
 			}
 		})
-
 	})
 	// 获取一条数据
 	router.get(`/${moduleName}/:id`, (req, res) => {
@@ -111,11 +110,8 @@ function setRoute(router, dal, moduleName) {
 
 	// 获取分页数据
 	router.get(`/${moduleName}s`, (req, res) => {
-		//分页页码
-		var page = 1;
-		if (req.query.page) {
-			page = Number(req.query.page);
-		}
+		var page = 1;//分页页码
+		if (req.query.page) { page = Number(req.query.page); }
 
 		// ******************* 查询条件 *******************
 		var filter = {};
@@ -133,7 +129,6 @@ function setRoute(router, dal, moduleName) {
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 		})
 	})
-
 
 
 	// return router;
