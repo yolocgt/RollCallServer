@@ -42,6 +42,20 @@ function setRoute(router, dal, moduleName) {
 				res.json({ status: "y", data: data })
 			})
 		})
+	} else {
+		// 根据实体名判断一个实体是否存在，判断是否存在
+		if (moduleName == "classInfo") moduleName = "class";
+		router.get(`/${moduleName}/exists/:name`, (req, res) => {
+			var fieldName = moduleName + "Name";
+			var filter = {};
+			filter[fieldName] = req.params.name;
+			// console.log(filter);
+			dal.getData(filter, (data) => {
+				console.log(data);
+				res.json({ status: 'y', data: data })
+			})
+
+		})
 	}
 
 
