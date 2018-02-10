@@ -31,6 +31,11 @@ OK：https://segmentfault.com/q/1010000012585905#a-1020000012729565
  学生批量删除
 
 
+班级按照最近添加的展示。。
+实体修改时 判断已存在不包括 实体本身id
+班级表前端重新设计
+其他数据表。。   对应学生修改
+
 
 
 
@@ -89,5 +94,6 @@ api接口文档
 
 
 
-
+self.url = "/ms/table/list";
+	
 mongoexport -d RollCall -c teacher -o teacher.dat
