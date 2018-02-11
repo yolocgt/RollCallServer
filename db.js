@@ -376,6 +376,7 @@ class ArrangeDal extends DBBase {
 	getData(filter, callback) {
 		this.model.count(filter)
 			.then(count => {
+				console.log('getData>>>>>>>>>>>>');
 				this.model.find(filter)
 					.populate('classInfo')
 					.populate('course')

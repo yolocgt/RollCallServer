@@ -95,10 +95,18 @@ function setRoute(router, dal, moduleName) {
 	// 获取一条数据
 	router.get(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
-		dal.findByID(id, function (data) {
-			// console.log(data);
-			res.json({ status: 'y', msg: '查找成功~', data: data })
-		})
+		if (moduleName != "arrange") {
+			dal.findByID(id, function (data) {
+				console.log('findByID............');
+				// console.log(data);
+				res.json({ status: 'y', msg: '查找成功~', data: data })
+			})
+		} else {
+			console.log('排课。。。。。。。。');
+			dal.findByID(id).populate('course classInfo').then(function (data) {
+				res.json({ status: 'y', msg: '查找成功~', data: data })
+			})
+		}
 	})
 
 	// 获取所有的数据
