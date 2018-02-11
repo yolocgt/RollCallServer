@@ -6,6 +6,21 @@
  * @param {String} moduleName 模块名
  */
 function setRoute(router, dal, moduleName) {
+	
+	// 根据班级id查询学生数量：
+	if (moduleName == "student") {
+		router.post(`/${moduleName}/count`, (req, res) => {
+			var classid = req.body.classid;
+			var filter = { "classInfo": classid };
+			console.log(filter);
+			dal.getData(filter, (data) => {
+				console.log('根据班级id查询学生数量：');
+				console.log(data);
+				res.json({ status: 'y', msg: '查询数量成功~', data: data })
+				
+			})
+		})
+	}
 	// 学生、教师、管理员、辅导员的登录接口
 	if (moduleName == "student" || moduleName == "teacher" || moduleName == "counselor" || moduleName == "admin") {
 		// 根据用户名查找一条数据，并比较密码
@@ -31,7 +46,6 @@ function setRoute(router, dal, moduleName) {
 				}
 			})
 		})
-
 		// 根据账号查找一条数据，判断是否存在
 		router.get(`/${moduleName}/exists/:id`, (req, res) => {
 			var id = req.params.id;
@@ -95,23 +109,18 @@ function setRoute(router, dal, moduleName) {
 	// 获取一条数据
 	router.get(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
-		if (moduleName != "arrange") {
-			dal.findByID(id, function (data) {
-				console.log('findByID............');
-				// console.log(data);
-				res.json({ status: 'y', msg: '查找成功~', data: data })
-			})
-		} else {
-			console.log('排课。。。。。。。。');
-			dal.findByID(id).populate('course classInfo').then(function (data) {
-				res.json({ status: 'y', msg: '查找成功~', data: data })
-			})
-		}
+		dal.findByID(id, function (data) {
+			console.log('findByID............');
+			// console.log(data);
+			res.json({ status: 'y', msg: '查找成功~', data: data })
+		})
 	})
 
 	// 获取所有的数据
 	router.get(`/all_${moduleName}`, (req, res) => {
 		dal.getData({}, (data) => {
+			// console.log('all............');
+			// console.log(data);
 			res.json({ status: 'y', msg: '获取数据成功', data: data })
 		})
 	})

@@ -182,6 +182,22 @@ class StudentDal extends DBBase {
 					})
 			})
 	}
+	getData(filter, callback) {
+		// console.log('筛选条件：');
+		// console.log(filter);
+		this.model.count(filter)
+			.then(count => {
+				this.model.find(filter)
+					.then(res => {
+						// console.log('结果：：');
+						// console.log(res);
+						callback({ count, res })
+					})
+					.catch(err => {
+						console.log(err)
+					})
+			})
+	}
 }
 
 ////// 教师表
@@ -277,7 +293,7 @@ class CounselorDal extends DBBase {
 					page = 1
 				}
 				this.model.find(filter) //根据条件进行查询
-					.populate('faculty')	
+					.populate('faculty')
 					.limit(pageSize)
 					.skip(pageSize * (page - 1))
 					.sort({ _id: -1 })
@@ -392,6 +408,23 @@ class ArrangeDal extends DBBase {
 					.catch(err => {
 						console.log(err)
 					})
+			})
+	}
+	/**
+	* 根据id获取单条记录
+	* @param  {[type]}   id       获取数据的id
+	* @param  {Function} callback 回调函数
+	* @return {[type]}            [description]
+	*/
+	findByID(id, callback) {
+		this.model.findById(id)
+			.populate('course classInfo')
+			.then(res => {
+				callback(res)
+			})
+			.catch(err => {
+				console.log(err)
+				callback(null)
 			})
 	}
 }
@@ -509,6 +542,7 @@ class AbsenceDal extends DBBase {
 					})
 			})
 	}
+	
 }
 
 // 导出数据表和模型
