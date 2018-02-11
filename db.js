@@ -166,10 +166,10 @@ class StudentDal extends DBBase {
 				}
 				this.model.find(filter) //根据条件进行查询
 					.populate('classInfo')
-					// .populate({
-					// 	path: 'classInfo',
-					// 	populate: { path: 'major' }
-					// })
+					.populate({
+						path: 'classInfo',
+						populate: { path: 'faculty' }
+					})
 					.limit(pageSize)
 					.skip(pageSize * (page - 1))
 					.sort({ _id: -1 })
@@ -194,6 +194,10 @@ var Teacher = mongoose.model('teacher', {
 		type: String,
 		default: "123"
 	},
+	faculty: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "faculty"
+	},//关联院系
 	avatar: String//头像
 }, 'teacher')
 class TeacherDal extends DBBase {
@@ -219,6 +223,7 @@ class TeacherDal extends DBBase {
 					page = 1
 				}
 				this.model.find(filter) //根据条件进行查询
+					.populate("faculty")
 					.limit(pageSize)
 					.skip(pageSize * (page - 1))
 					.sort({ _id: -1 })
@@ -239,10 +244,10 @@ var Counselor = mongoose.model('counselor', {
 	sex: String,//性别
 	id: Number,//工号
 	phone: String,//电话
-	// facultyName: {//学院
-	// 	type: mongoose.Schema.Types.ObjectId,
-	// 	ref: "faculty"
-	// },
+	faculty: {//学院
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "faculty"
+	},//关联院系
 	password: {
 		type: String,
 		default: "123"
@@ -272,6 +277,7 @@ class CounselorDal extends DBBase {
 					page = 1
 				}
 				this.model.find(filter) //根据条件进行查询
+					.populate('faculty')	
 					.limit(pageSize)
 					.skip(pageSize * (page - 1))
 					.sort({ _id: -1 })
