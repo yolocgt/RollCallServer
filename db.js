@@ -137,7 +137,7 @@ var Student = mongoose.model('student', {
 	birth: Date,//生日
 	password: {
 		type: String,
-		default: "123"	//202cb962ac59075b964b07152d234b70，21218cca77804d2ba1922c33e0151105，e10adc3949ba59abbe56e057f20f883e
+		default: "e10adc3949ba59abbe56e057f20f883e"	//202cb962ac59075b964b07152d234b70，21218cca77804d2ba1922c33e0151105，e10adc3949ba59abbe56e057f20f883e
 	},
 	avatar: String//头像
 }, 'student')
@@ -208,7 +208,7 @@ var Teacher = mongoose.model('teacher', {
 	phone: String,//电话
 	password: {
 		type: String,
-		default: "123"
+		default: "e10adc3949ba59abbe56e057f20f883e"
 	},
 	faculty: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -266,7 +266,7 @@ var Counselor = mongoose.model('counselor', {
 	},//关联院系
 	password: {
 		type: String,
-		default: "123"
+		default: "e10adc3949ba59abbe56e057f20f883e"
 	},
 	avatar: String//头像
 }, 'counselor')
