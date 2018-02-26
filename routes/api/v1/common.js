@@ -6,7 +6,7 @@
  * @param {String} moduleName 模块名
  */
 function setRoute(router, dal, moduleName) {
-	
+
 	// 根据班级id查询学生数量：
 	if (moduleName == "student") {
 		router.post(`/${moduleName}/count`, (req, res) => {
@@ -17,7 +17,7 @@ function setRoute(router, dal, moduleName) {
 				console.log('根据班级id查询学生数量：');
 				console.log(data);
 				res.json({ status: 'y', msg: '查询数量成功~', data: data })
-				
+
 			})
 		})
 	}
@@ -133,13 +133,14 @@ function setRoute(router, dal, moduleName) {
 		// ******************* 查询条件 *******************
 		var filter = {};
 		var word = req.query.word;
-		// 1.模糊查询管理员
+		// 1.模糊查询管理员 考勤记录
 		if (word) {
 			filter.$or = [
 				{ id: { '$regex': `.*?${word}.*?` } },
-				{ name: { '$regex': `.*?${word}.*?` } }
+				{ name: { '$regex': `.*?${word}.*?` } },
+				{ rollcall: word }
 			];
-			// console.log(filter.$or);
+			console.log(filter.$or);
 		}
 		// console.log("查询条件：");  console.log(filter);
 		dal.getDataByPage(page, filter, (data) => {
