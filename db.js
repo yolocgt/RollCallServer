@@ -504,7 +504,8 @@ var Absence = mongoose.model('absence', {
 	},
 	absenceReson: String,//缺勤原因
 }, 'absence')
-// 课程模型
+
+// 缺勤模型
 class AbsenceDal extends DBBase {
 	constructor() {
 		super(Absence);
@@ -528,7 +529,12 @@ class AbsenceDal extends DBBase {
 					page = 1
 				}
 				this.model.find(filter) //根据条件进行查询
-					.populate('rollcall')
+					.populate({
+						path: 'rollcall',
+						populate: {
+							path: 'arrange', populate: { path: 'classInfo' }
+						}
+					})
 					.populate('student')
 					.limit(pageSize)
 					.skip(pageSize * (page - 1))
@@ -542,8 +548,13 @@ class AbsenceDal extends DBBase {
 					})
 			})
 	}
-	
+
 }
+
+
+
+
+
 
 // 导出数据表和模型
 module.exports = {
