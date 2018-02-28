@@ -138,12 +138,16 @@ function setRoute(router, dal, moduleName) {
 			filter.$or = [
 				{ id: { '$regex': `.*?${word}.*?` } },
 				{ name: { '$regex': `.*?${word}.*?` } },
+				{ learnTerm: { '$regex': `.*?${word}.*?` } },
+				{ learnYear: { '$regex': `.*?${word}.*?` } },
+				{ name: { '$regex': `.*?${word}.*?` } },
 				{ rollcall: word }
 			];
 			console.log(filter.$or);
 		}
 		// console.log("查询条件：");  console.log(filter);
 		dal.getDataByPage(page, filter, (data) => {
+			console.log(data);
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 		})
 	})
