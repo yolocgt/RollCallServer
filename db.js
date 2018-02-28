@@ -362,6 +362,7 @@ class ArrangeDal extends DBBase {
 				if (page <= 0) {
 					page = 1
 				}
+
 				this.model.find(filter) //根据条件进行查询
 					.populate('classInfo')
 					.populate('course')
@@ -374,8 +375,13 @@ class ArrangeDal extends DBBase {
 					.skip(pageSize * (page - 1))
 					.sort({ _id: -1 })
 					.then(res => {
-						//返回两个数据 总页数和查询结果
-						callback({ pageCount: pageCount, res: res })
+						/**返回两三个数据 总页数和查询结果以及学年
+						 * 学年：限定最近年份4条
+						 */
+						this.model.aggregate([{ $group: { _id: '$learnYear', count: { $sum: 1 } } }, { $limit: 4 }, { $sort: { _id: -1 } }]).then((data) => {
+							callback({ pageCount: pageCount, res: res, learnYears: data })
+
+						})
 					})
 					.catch(err => {
 						console.log(err)
@@ -384,11 +390,11 @@ class ArrangeDal extends DBBase {
 	}
 
 	/**重写父类方法 根据查询条件取数据
-     * 
-     * @param  {[type]}   filter   查询条件
-     * @param  {Function} callback 回调函数
-     * @return {[type]}            [description]
-     */
+	 * 
+	 * @param  {[type]}   filter   查询条件
+	 * @param  {Function} callback 回调函数
+	 * @return {[type]}            [description]
+	 */
 	getData(filter, callback) {
 		this.model.count(filter)
 			.then(count => {
