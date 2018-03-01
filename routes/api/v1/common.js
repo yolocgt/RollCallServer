@@ -117,37 +117,58 @@ function setRoute(router, dal, moduleName) {
 	})
 
 	// 获取所有的数据
-	router.get(`/all_${moduleName}`, (req, res) => {
-		dal.getData({}, (data) => {
-			// console.log('all............');
-			// console.log(data);
+	router.post(`/all_${moduleName}`, (req, res) => {
+		console.log('模糊查询体：');
+		console.log(req.body);
+		var filter = { className: { '$regex': `.*?${req.body.className}.*?` } };
+		console.log(filter);
+
+		dal.getData(filter, (data) => {
+			console.log('all............');
+			console.log(data);
 			res.json({ status: 'y', msg: '获取数据成功', data: data })
 		})
 	})
 
 	// 获取分页数据
-	router.get(`/${moduleName}s`, (req, res) => {
-		var page = 1;//分页页码
-		if (req.query.page) { page = Number(req.query.page); }
+	router.post(`/${moduleName}s`, (req, res) => {
+		var page = 1;//
+		console.log(`模块名【${moduleName}】`);
+		console.log('查询条件：》》》');
+		console.log(req.body);
+		if (req.body.page) { page = Number(req.body.page); }
 
 		// ******************* 查询条件 *******************
 		var filter = {};
-		var word = req.query.word;
+		var word = req.body.word;
+		var word2 = req.body.word2;
+		var word3 = req.body.word3;
 		// 1.模糊查询管理员 考勤记录
 		if (word) {
-			filter.$or = [
-				{ id: { '$regex': `.*?${word}.*?` } },
-				{ name: { '$regex': `.*?${word}.*?` } },
-				{ learnTerm: { '$regex': `.*?${word}.*?` } },
-				{ learnYear: { '$regex': `.*?${word}.*?` } },
-				{ name: { '$regex': `.*?${word}.*?` } },
-				{ rollcall: word }
-			];
-			console.log(filter.$or);
+			if (moduleName == "arrange") {
+				filter.learnYear = word;
+				if (word2) {
+					filter.learnTerm = word2;
+				}
+				if (word3) {
+					// filter.learnTerm = word3;
+				}
+				console.log(filter);
+			} else {
+				filter.$or = [
+					{ id: { '$regex': `.*?${word}.*?` } },
+					{ name: { '$regex': `.*?${word}.*?` } },
+					// { learnTerm: word },
+					// { learnYear: word2 },
+					// { name: { '$regex': `.*?${word}.*?` } },
+					{ rollcall: word }
+				];
+				console.log(filter.$or);
+			}
 		}
-		// console.log("查询条件：");  console.log(filter);
+		console.log("查询条件：" + filter);
 		dal.getDataByPage(page, filter, (data) => {
-			console.log(data);
+			// console.log(data);
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 		})
 	})
