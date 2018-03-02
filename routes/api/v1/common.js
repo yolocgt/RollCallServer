@@ -124,13 +124,13 @@ function setRoute(router, dal, moduleName) {
 		console.log(filter);
 
 		dal.getData(filter, (data) => {
-			console.log('all............');
-			console.log(data);
+			// console.log('all............');
+			// console.log(data);
 			res.json({ status: 'y', msg: '获取数据成功', data: data })
 		})
 	})
 
-	// 获取分页数据
+	// 获取分页数据  bug?
 	router.post(`/${moduleName}s`, (req, res) => {
 		var page = 1;//
 		console.log(`模块名【${moduleName}】`);
@@ -144,29 +144,31 @@ function setRoute(router, dal, moduleName) {
 		var word2 = req.body.word2;
 		var word3 = req.body.word3;
 		// 1.模糊查询管理员 考勤记录
-		if (word) {
-			if (moduleName == "arrange") {
+		// 排课表
+		if (moduleName == "arrange") {
+			if (word) {
 				filter.learnYear = word;
-				if (word2) {
-					filter.learnTerm = word2;
-				}
-				if (word3) {
-					// filter.learnTerm = word3;
-				}
-				console.log(filter);
-			} else {
+			}
+			if (word2) {
+				filter.learnTerm = word2;
+			}
+			if (word3) {
+				filter.classInfo = {};
+				filter.classInfo.$in = word3;
+			}
+			console.log('arrange>>>>>>>>>>>>>>>>>>>');
+			console.log(filter);
+		} else if (moduleName == "student" || moduleName == "teacher" || moduleName == "admin" || moduleName == "counselor" || moduleName == "rollcall") {
+			if (word) {
 				filter.$or = [
 					{ id: { '$regex': `.*?${word}.*?` } },
 					{ name: { '$regex': `.*?${word}.*?` } },
-					// { learnTerm: word },
-					// { learnYear: word2 },
-					// { name: { '$regex': `.*?${word}.*?` } },
 					{ rollcall: word }
 				];
-				console.log(filter.$or);
 			}
+			console.log(filter.$or);
 		}
-		console.log("查询条件：" + filter);
+		// console.log("查询条件：" + filter);
 		dal.getDataByPage(page, filter, (data) => {
 			// console.log(data);
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
