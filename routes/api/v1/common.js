@@ -120,7 +120,10 @@ function setRoute(router, dal, moduleName) {
 	router.post(`/all_${moduleName}`, (req, res) => {
 		console.log('模糊查询体：');
 		console.log(req.body);
-		var filter = { className: { '$regex': `.*?${req.body.className}.*?` } };
+		// 
+		if (req.body.className) {
+			var filter = { className: { '$regex': `.*?${req.body.className}.*?` } };
+		}
 		console.log(filter);
 
 		dal.getData(filter, (data) => {
@@ -168,7 +171,7 @@ function setRoute(router, dal, moduleName) {
 			}
 			console.log(filter.$or);
 		}
-		// console.log("查询条件：" + filter);
+		console.log("查询条件：" + filter);
 		dal.getDataByPage(page, filter, (data) => {
 			// console.log(data);
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
