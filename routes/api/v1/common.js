@@ -87,7 +87,7 @@ function setRoute(router, dal, moduleName) {
 	// 删除一条数据
 	router.delete(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
-		dal.del(id, function (isOK) {
+		dal.delById(id, function (isOK) {
 			if (isOK) {
 				res.json({ status: 'y', msg: '删除成功~' })
 			} else {
@@ -95,6 +95,27 @@ function setRoute(router, dal, moduleName) {
 			}
 		})
 	})
+
+	// 删除多条数据
+	router.delete(`/${moduleName}s/:id`, (req, res) => {
+		var id = req.params.id;
+		console.log(moduleName);
+		console.log('删除多条考勤数据');
+		console.log(id);
+		if (id) {
+			var filter = {
+				rollcall: id
+			}
+			dal.delMany(filter, function (isOK) {
+				if (isOK) {
+					res.json({ status: 'y', msg: '删除成功~' })
+				} else {
+					res.json({ status: 'n', msg: '删除失败。' })
+				}
+			})
+		} else console.log('未指定删除条件 id');
+	})
+
 	// 修改一条数据
 	router.put(`/${moduleName}/:id`, (req, res) => {
 		var id = req.params.id;
@@ -118,11 +139,17 @@ function setRoute(router, dal, moduleName) {
 
 	// 获取所有的数据
 	router.post(`/all_${moduleName}`, (req, res) => {
+		console.log('模块名 '+moduleName);
 		console.log('模糊查询体：');
 		console.log(req.body);
 		// 
 		if (req.body.className) {
 			var filter = { className: { '$regex': `.*?${req.body.className}.*?` } };
+		}
+
+		var faculty = req.body.faculty;
+		if (faculty) {
+			var filter = { faculty: faculty }
 		}
 		console.log(filter);
 
