@@ -3,7 +3,7 @@ var mongoose = require('mongoose')
 
 // 建立数据库连接
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/RollCall', {
+mongoose.connect('mongodb://localhost/RollCall2', {
     useMongoClient: true,
     promiseLibrary: global.Promise
 });
@@ -45,8 +45,24 @@ class DBBase {
      * @param  {Function} callback 回调函数
      * @return {[type]}            [description]
      */
-    del(id, callback) {
+    delById(id, callback) {
         this.model.findByIdAndRemove(id)
+            .then(callback(true))
+            .catch(err => {
+                console.log(err)
+                callback(false)
+            })
+    }
+    
+    /**
+     * @description 根据条件删除指定的记录
+     * @author CGT
+     * @param {any} filter 删除条件
+     * @param {function} callback 回调函数
+     * @memberof DBBase
+     */
+    delMany(filter, callback) {
+        this.model.remove(filter)
             .then(callback(true))
             .catch(err => {
                 console.log(err)
@@ -130,6 +146,8 @@ class DBBase {
                 if (page <= 0) {
                     page = 1
                 }
+                console.log('db_base 查询条件 ');
+                console.log(filter);
                 this.model.find(filter) //根据条件进行查询
                     .limit(pageSize)
                     .skip(pageSize * (page - 1))
