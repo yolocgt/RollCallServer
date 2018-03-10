@@ -139,17 +139,18 @@ function setRoute(router, dal, moduleName) {
 
 	// 获取所有的数据
 	router.post(`/all_${moduleName}`, (req, res) => {
-		console.log('模块名 '+moduleName);
+		console.log('模块名 ' + moduleName);
 		console.log('模糊查询体：');
 		console.log(req.body);
 		// 
+		var filter = {};
 		if (req.body.className) {
-			var filter = { className: { '$regex': `.*?${req.body.className}.*?` } };
+			filter.className = { '$regex': `.*?${req.body.className}.*?` };
 		}
 
 		var faculty = req.body.faculty;
 		if (faculty) {
-			var filter = { faculty: faculty }
+			filter.faculty = faculty
 		}
 		console.log(filter);
 
@@ -171,6 +172,8 @@ function setRoute(router, dal, moduleName) {
 		// ******************* 查询条件 *******************
 		var filter = {};
 		var word = req.body.word;
+		// console.log('word::::');
+		// console.log(word);
 		var word2 = req.body.word2;
 		var word3 = req.body.word3;
 		// 1.模糊查询管理员 考勤记录
