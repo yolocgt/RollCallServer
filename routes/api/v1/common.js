@@ -139,17 +139,19 @@ function setRoute(router, dal, moduleName) {
 
 	// 获取所有的数据
 	router.post(`/all_${moduleName}`, (req, res) => {
-		console.log('模块名 '+moduleName);
+		console.log('模块名 ' + moduleName);
 		console.log('模糊查询体：');
 		console.log(req.body);
 		// 
+		var filter = {};
 		if (req.body.className) {
-			var filter = { className: { '$regex': `.*?${req.body.className}.*?` } };
+			filter.className = { '$regex': `.*?${req.body.className}.*?` };
 		}
 
+		// 2.班级信息编辑 院系下拉框级联辅导员信息
 		var faculty = req.body.faculty;
 		if (faculty) {
-			var filter = { faculty: faculty }
+			filter.faculty = faculty;
 		}
 		console.log(filter);
 
