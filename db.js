@@ -500,7 +500,7 @@ class RollcallDal extends DBBase {
 		this.model.findById(id)
 			.populate({
 				path: 'arrange',
-				populate: { path: 'classInfo' }
+				populate: [{ path: 'classInfo' }, { path: 'course' }]
 			})
 			.then(res => {
 				callback(res)
