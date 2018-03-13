@@ -496,6 +496,39 @@ class RollcallDal extends DBBase {
 					})
 			})
 	}
+	findByID(id, callback) {
+		this.model.findById(id)
+			.populate({
+				path: 'arrange',
+				populate: { path: 'classInfo' }
+			})
+			.then(res => {
+				callback(res)
+			})
+			.catch(err => {
+				console.log(err)
+				callback(null)
+			})
+	}
+	// getData(filter, callback) {
+	// 	this.model.count(filter)
+	// 		.then(count => {
+	// 			console.log('getData>>>>>>>>>>>>');
+	// 			this.model.find(filter)
+	// 				.populate('arrange')
+	// 				// .populate({
+	// 				// 	path: 'classInfo',
+	// 				// 	populate: { path: 'major' }
+	// 				// })
+	// 				.then(res => {
+	// 					console.log(res);
+	// 					callback(res, count)
+	// 				})
+	// 				.catch(err => {
+	// 					console.log(err)
+	// 				})
+	// 		})
+	// }
 }
 
 // 缺勤信息表
