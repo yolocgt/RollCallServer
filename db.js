@@ -154,7 +154,7 @@ class StudentDal extends DBBase {
      */
 	getDataByPage(page, filter, callback) {
 		console.log('进入学生:');
-		var pageSize = global.pageSize //每页显示的数量
+		var pageSize = 10 //每页显示的数量
 		this.model.count(filter) //统计记录数量
 			.then(count => {
 				var pageCount = Math.ceil(count / pageSize)
