@@ -241,6 +241,24 @@ function setRoute(router, dal, moduleName) {
 			}
 			console.log(filter.$or);
 		}
+		// 学生信息管理 模糊查询（姓名/性别/电话/地址）
+		if (moduleName == "student") {
+			if (word) {
+				filter.$or = [
+					{ name: { '$regex': `.*?${word}.*?` } },
+					{ sex: { '$regex': `.*?${word}.*?` } },
+					// { id: { '$regex': `.*?${word}.*?` } },
+					{ phone: { '$regex': `.*?${word}.*?` } },
+					{ address: { '$regex': `.*?${word}.*?` } },
+				]
+			}
+			if (req.body.cids) {
+				filter.classInfo = {};
+				filter.classInfo.$in = req.body.cids
+				
+			}
+		}
+		console.log('..........');
 		console.log("查询条件：" + filter);
 		dal.getDataByPage(page, filter, (data) => {
 			// console.log(data);
