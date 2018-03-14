@@ -127,7 +127,7 @@ class ClassInfoDal extends DBBase {
 var Student = mongoose.model('student', {
 	name: String,//姓名
 	sex: String,//性别
-	id: Number,//学号
+	id: Number,//学号  Number or String??
 	phone: String,//电话
 	address: String,//地址
 	classInfo: {//班级
@@ -153,6 +153,7 @@ class StudentDal extends DBBase {
      * @return {[type]}            [description]
      */
 	getDataByPage(page, filter, callback) {
+		console.log('进入学生:');
 		var pageSize = global.pageSize //每页显示的数量
 		this.model.count(filter) //统计记录数量
 			.then(count => {
@@ -164,6 +165,7 @@ class StudentDal extends DBBase {
 				if (page <= 0) {
 					page = 1
 				}
+				console.log(filter);
 				this.model.find(filter) //根据条件进行查询
 					.populate('classInfo')
 					.populate({
