@@ -2,7 +2,7 @@ const db_base = require('./db_base')
 const mongoose = db_base.mongoose;
 const DBBase = db_base.DBBase;
 
-////// 管理员表
+////// 1管理员表
 var Admin = mongoose.model('admin', {
 	id: String,//账号
 	name: String,//姓名
@@ -18,7 +18,7 @@ class AdminDal extends DBBase {
 	}
 }
 
-////// 院系表
+////// 2院系表
 var Faculty = mongoose.model('faculty', {
 	facultyName: String,//院系名称
 	director: String,//系主任
@@ -31,7 +31,126 @@ class FacultyDal extends DBBase {
 	}
 }
 
-////// 专业表
+////// 3辅导员表
+var Counselor = mongoose.model('counselor', {
+	name: String,//姓名
+	sex: String,//性别
+	id: Number,//工号
+	phone: String,//电话
+	password: {
+		type: String,
+		default: "e10adc3949ba59abbe56e057f20f883e"
+	},
+	faculty: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "faculty"
+	},//关联院系
+	avatar: String//头像
+}, 'counselor')
+class CounselorDal extends DBBase {
+	constructor() {
+		super(Counselor);
+	}
+	/** 分页取数据
+     * @param  {[type]}   page     当前页码
+     * @param  {[type]}   filter   查询条件
+     * @param  {Function} callback 回调函数
+     * @return {[type]}            [description]
+     */
+	getDataByPage(page, filter, callback) {
+		var pageSize = global.pageSize //每页显示的数量
+		this.model.count(filter) //统计记录数量
+			.then(count => {
+				var pageCount = Math.ceil(count / pageSize)
+				if (page > pageCount) { //防止页码超出范围
+					page = pageCount
+				}
+				// 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
+				if (page <= 0) {
+					page = 1
+				}
+				this.model.find(filter) //根据条件进行查询
+					.populate('faculty')
+					.limit(pageSize)
+					.skip(pageSize * (page - 1))
+					.sort({ _id: -1 })
+					.then(res => {
+						//返回两个数据 总页数和查询结果
+						callback({ pageCount: pageCount, res: res })
+					})
+					.catch(err => {
+						console.log(err)
+					})
+			})
+	}
+}
+
+////// 4教师表
+var Teacher = mongoose.model('teacher', {
+	name: String,//姓名
+	sex: String,//性别
+	id: Number,//教师号
+	phone: String,//电话
+	password: {
+		type: String,
+		default: "e10adc3949ba59abbe56e057f20f883e"
+	},
+	faculty: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "faculty"
+	},//关联院系
+	avatar: String//头像
+}, 'teacher')
+class TeacherDal extends DBBase {
+	constructor() {
+		super(Teacher);
+	}
+	/** 分页取数据
+     * @param  {[type]}   page     当前页码
+     * @param  {[type]}   filter   查询条件
+     * @param  {Function} callback 回调函数
+     * @return {[type]}            [description]
+     */
+	getDataByPage(page, filter, callback) {
+		var pageSize = global.pageSize //每页显示的数量
+		this.model.count(filter) //统计记录数量
+			.then(count => {
+				var pageCount = Math.ceil(count / pageSize)
+				if (page > pageCount) { //防止页码超出范围
+					page = pageCount
+				}
+				// 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
+				if (page <= 0) {
+					page = 1
+				}
+				this.model.find(filter) //根据条件进行查询
+					.populate("faculty")
+					.limit(pageSize)
+					.skip(pageSize * (page - 1))
+					.sort({ _id: -1 })
+					.then(res => {
+						//返回两个数据 总页数和查询结果
+						callback({ pageCount: pageCount, res: res })
+					})
+					.catch(err => {
+						console.log(err)
+					})
+			})
+	}
+}
+
+////// 5课程表
+var Course = mongoose.model('course', {
+	courseName: String//课程名称
+}, 'course')
+// 课程模型
+class CourseDal extends DBBase {
+	constructor() {
+		super(Course);
+	}
+}
+
+////// 6专业表
 var Major = mongoose.model('major', {
 	majorName: String,//专业名称
 }, 'major')
@@ -42,8 +161,11 @@ class MajorDal extends DBBase {
 	}
 }
 
-////// 班级表
+////// 7班级表
 var ClassInfo = mongoose.model('classInfo', {
+	cyear: Number,//年级
+	cno: Number,//班级
+	className: String,//班级名
 	faculty: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "faculty"
@@ -56,9 +178,6 @@ var ClassInfo = mongoose.model('classInfo', {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "counselor"
 	},//关联辅导员
-	cyear: Number,//年级
-	cno: Number,//班级
-	className: String//班级名
 }, "classInfo")
 // 班级模型
 class ClassInfoDal extends DBBase {
@@ -123,21 +242,21 @@ class ClassInfoDal extends DBBase {
 	}
 }
 
-////// 学生表
+////// 8学生表
 var Student = mongoose.model('student', {
 	name: String,//姓名
 	sex: String,//性别
 	id: Number,//学号  Number or String??
 	phone: String,//电话
 	address: String,//地址
-	classInfo: {//班级
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "classInfo"
-	},
 	birth: Date,//生日
 	password: {
 		type: String,
 		default: "e10adc3949ba59abbe56e057f20f883e"	//202cb962ac59075b964b07152d234b70，21218cca77804d2ba1922c33e0151105，e10adc3949ba59abbe56e057f20f883e
+	},
+	classInfo: {//班级
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "classInfo"
 	},
 	avatar: String//头像
 }, 'student')
@@ -202,132 +321,12 @@ class StudentDal extends DBBase {
 	}
 }
 
-////// 教师表
-var Teacher = mongoose.model('teacher', {
-	name: String,//姓名
-	sex: String,//性别
-	id: Number,//教师号
-	phone: String,//电话
-	password: {
-		type: String,
-		default: "e10adc3949ba59abbe56e057f20f883e"
-	},
-	faculty: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "faculty"
-	},//关联院系
-	avatar: String//头像
-}, 'teacher')
-class TeacherDal extends DBBase {
-	constructor() {
-		super(Teacher);
-	}
-	/** 分页取数据
-     * @param  {[type]}   page     当前页码
-     * @param  {[type]}   filter   查询条件
-     * @param  {Function} callback 回调函数
-     * @return {[type]}            [description]
-     */
-	getDataByPage(page, filter, callback) {
-		var pageSize = global.pageSize //每页显示的数量
-		this.model.count(filter) //统计记录数量
-			.then(count => {
-				var pageCount = Math.ceil(count / pageSize)
-				if (page > pageCount) { //防止页码超出范围
-					page = pageCount
-				}
-				// 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
-				if (page <= 0) {
-					page = 1
-				}
-				this.model.find(filter) //根据条件进行查询
-					.populate("faculty")
-					.limit(pageSize)
-					.skip(pageSize * (page - 1))
-					.sort({ _id: -1 })
-					.then(res => {
-						//返回两个数据 总页数和查询结果
-						callback({ pageCount: pageCount, res: res })
-					})
-					.catch(err => {
-						console.log(err)
-					})
-			})
-	}
-}
-
-////// 辅导员表
-var Counselor = mongoose.model('counselor', {
-	name: String,//姓名
-	sex: String,//性别
-	id: Number,//工号
-	phone: String,//电话
-	faculty: {//学院
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "faculty"
-	},//关联院系
-	password: {
-		type: String,
-		default: "e10adc3949ba59abbe56e057f20f883e"
-	},
-	avatar: String//头像
-}, 'counselor')
-class CounselorDal extends DBBase {
-	constructor() {
-		super(Counselor);
-	}
-	/** 分页取数据
-     * @param  {[type]}   page     当前页码
-     * @param  {[type]}   filter   查询条件
-     * @param  {Function} callback 回调函数
-     * @return {[type]}            [description]
-     */
-	getDataByPage(page, filter, callback) {
-		var pageSize = global.pageSize //每页显示的数量
-		this.model.count(filter) //统计记录数量
-			.then(count => {
-				var pageCount = Math.ceil(count / pageSize)
-				if (page > pageCount) { //防止页码超出范围
-					page = pageCount
-				}
-				// 防止查询不到结果的时候page值变为0导致skip跳过的参数为负数
-				if (page <= 0) {
-					page = 1
-				}
-				this.model.find(filter) //根据条件进行查询
-					.populate('faculty')
-					.limit(pageSize)
-					.skip(pageSize * (page - 1))
-					.sort({ _id: -1 })
-					.then(res => {
-						//返回两个数据 总页数和查询结果
-						callback({ pageCount: pageCount, res: res })
-					})
-					.catch(err => {
-						console.log(err)
-					})
-			})
-	}
-}
-
-////// 课程表
-var Course = mongoose.model('course', {
-	courseName: String//课程名称
-}, 'course')
-// 课程模型
-class CourseDal extends DBBase {
-	constructor() {
-		super(Course);
-	}
-}
-
-////// 排课表
+////// 9排课表
 var Arrange = mongoose.model('arrange', {
 	learnYear: String,//学年
 	learnTerm: String,//学期
 	section: String,//节次
 	classroom: String,//教室
-
 	classInfo: {//班级
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "classInfo"
@@ -437,7 +436,7 @@ class ArrangeDal extends DBBase {
 	}
 }
 
-////// 点名表
+////// 10点名表
 var Rollcall = mongoose.model('rollcall', {
 	arrange: {//排课
 		type: mongoose.Schema.Types.ObjectId,
@@ -448,7 +447,7 @@ var Rollcall = mongoose.model('rollcall', {
 		default: Date.now()
 	},
 	actual: Number,//实到人数
-	fact: Number//实际总人数
+	absent: Number//缺勤人数 备注
 }, 'rollcall')
 // 点名模型
 class RollcallDal extends DBBase {
@@ -533,19 +532,18 @@ class RollcallDal extends DBBase {
 	// }
 }
 
-// 缺勤信息表
+// 11考勤信息表
 var Absence = mongoose.model('absence', {
 	rollcall: {//点名信息
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'rollcall'
 	},
-	student: {//学生
+	student: {//学生信息
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'student'
 	},
-	absenceReson: String,//缺勤原因
+	absenceReson: String,//缺勤原因（考勤类别）
 }, 'absence')
-
 // 缺勤模型
 class AbsenceDal extends DBBase {
 	constructor() {
@@ -593,16 +591,16 @@ class AbsenceDal extends DBBase {
 }
 
 
-
-
-
-
 // 导出数据表和模型
 module.exports = {
 	Admin,
 	AdminDal,
 	Faculty,
 	FacultyDal,
+	Counselor,
+	CounselorDal,
+	Teacher,
+	TeacherDal,
 	Course,
 	CourseDal,
 	Major,
@@ -611,14 +609,10 @@ module.exports = {
 	ClassInfoDal,
 	Student,
 	StudentDal,
-	Teacher,
-	TeacherDal,
-	Counselor,
-	CounselorDal,
 	Arrange,
 	ArrangeDal,
-	Absence,
-	AbsenceDal,
 	Rollcall,
-	RollcallDal
+	RollcallDal,
+	Absence,
+	AbsenceDal
 }
