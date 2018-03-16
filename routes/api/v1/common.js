@@ -192,7 +192,21 @@ function setRoute(router, dal, moduleName) {
 		if (arrange) {
 			filter.arrange = arrange;
 		}
-		
+
+		// 查询缺勤学生数量
+		if (moduleName == "absence") {
+			var rollcall = req.body.rollcall;
+			if (rollcall) {
+				filter.rollcall = rollcall;
+				filter.$or = [
+					{ absenceReson: "请假" },
+					{ absenceReson: "旷课" },
+				]
+
+				console.log('查询缺勤学生总数、、、、、、、、、、');
+				console.log(filter);
+			}
+		}
 		console.log('*************');
 		console.log(filter);
 
@@ -241,7 +255,7 @@ function setRoute(router, dal, moduleName) {
 			}
 			console.log(filter.$or);
 		}
-		
+
 		// 学生信息管理 模糊查询（姓名/性别/电话/地址）
 		if (moduleName == "student") {
 			if (word) {
@@ -256,13 +270,13 @@ function setRoute(router, dal, moduleName) {
 			if (req.body.cids) {
 				filter.classInfo = {};
 				filter.classInfo.$in = req.body.cids
-				
+
 			}
 		}
-		
+
 		// console.log('>>>>>>>>>>>>>>>>>>>>');
 		// 点击管理点名信息中的缺勤人数跳转。根据点名记录id查找缺勤信息
-		if (moduleName=="absence") {
+		if (moduleName == "absence") {
 			if (word) {
 				filter.rollcall = word;
 			}
@@ -273,7 +287,7 @@ function setRoute(router, dal, moduleName) {
 			res.json({ status: 'y', msg: '获取分页数据成功', data: data })
 		})
 	})
-	
+
 	// return router;
 }
 
