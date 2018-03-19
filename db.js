@@ -446,8 +446,9 @@ var Rollcall = mongoose.model('rollcall', {
 		type: Date,
 		default: Date.now()
 	},
-	actual: Number,//实到人数
-	absent: Number//缺勤人数 备注
+	tardinessNum:Number,//迟到早退人数
+	actualNum: Number,//实到人数
+	absentNum: Number//缺勤人数 备注
 }, 'rollcall')
 // 点名模型
 class RollcallDal extends DBBase {
