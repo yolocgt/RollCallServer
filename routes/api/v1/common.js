@@ -202,8 +202,16 @@ function setRoute(router, dal, moduleName) {
 					{ absenceReson: "请假" },
 					{ absenceReson: "旷课" },
 				]
-
 				console.log('查询缺勤学生总数、、、、、、、、、、');
+				console.log(filter);
+			}
+			var rollcall2 = req.body.rollcall2;
+			if (rollcall2) {
+				filter = {
+					rollcall: rollcall2,
+					absenceReson: "迟到早退"
+				};
+				console.log('查询迟到学生总数、、、、、、、、、、');
 				console.log(filter);
 			}
 		}
