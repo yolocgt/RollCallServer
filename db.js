@@ -246,7 +246,7 @@ class ClassInfoDal extends DBBase {
 var Student = mongoose.model('student', {
 	name: String,//姓名
 	sex: String,//性别
-	id: Number,//学号  Number or String??
+	id: String,//学号  Number or String??
 	phone: String,//电话
 	address: String,//地址
 	birth: Date,//生日
